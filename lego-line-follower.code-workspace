@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "usa_mesmo"
+		}
+	],
+	"settings": {
+		"terminal.integrated.shell.windows": "cmd.exe"
+	}
+}

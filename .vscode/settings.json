@@ -1,0 +1,9 @@
+{
+    "files.eol": "\n",
+    "ev3devBrowser.download.exclude": "{**/.*,LICENSE,README.md}",
+    "terminal.integrated.shell.windows": "cmd.exe",
+    "python.linting.pylintEnabled": false,
+    "python.linting.mypyEnabled": true,
+    "python.linting.enabled": true,
+    "python.pythonPath": "/usr/bin/python3"
+}
