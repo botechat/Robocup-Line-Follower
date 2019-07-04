@@ -60,18 +60,31 @@ class Robot:
         else:
             return False
 
-    def encontrarT(self): #encontrar target e trigger
+    def encontrarTarget(self): #encontrar target
+        global target
+        Sound.speak("Target")
+        for i in range(5):
+            Robot.verificaIntensidade(self)
+            target += middle
+
+        target = target/5
+        Sound.speak("OK")
+        Robot.stop(self,2000)
+
+    def encontrarTrigger(self): #encontrar trigger
         global target
         global trigger
+        Sound.speak("Trigger")
         black = 0
         for i in range(5):
             Robot.verificaIntensidade(self)
-            target += right
+            target += middle
             black += middle
 
-        target = target/5
         black = black/5
         trigger = (target + black)/2
+        Sound.speak("OK")
+        Robot.stop(self,2000)
 
     def stop(self,time):
         self.lm1.run_timed(speed_sp = 0, time_sp = time, stop_action = 'coast')
@@ -133,9 +146,7 @@ class Robot:
         global target
         global trigger
         global turn
-        global errorLeft
-        global errorRight
-        global errorTotal
+        global error
         global kp
         global ki
         global kd
@@ -143,30 +154,40 @@ class Robot:
         global integral
         global derivative
         global lastError
+        global errorMeio
+        global targetMeio
+        global integralMeio
+        global derivativeMeio
+        global lastErrorMeio
+        global correctionMeio
+        global kpMeio
+        global kiMeio
+        global kdMeio
+        global errorLeft
+        global errorTotal
         left = self.se.reflected_light_intensity
         middle = self.sm.reflected_light_intensity
         right = self.sd.reflected_light_intensity
 
+        errorMeio = middle - targetMeio
+        integralMeio += errorMeio
+        derivativeMeio = errorMeio - lastErrorMeio
+        correctionMeio = errorMeio * kpMeio + integralMeio * kiMeio + derivativeMeio * kdMeio
+        lastErrorMeio = errorMeio
+
         errorLeft = left - target
         errorRight = right - target
-        errorTotal = -errorLeft + errorRight
+        errorTotal = (errorLeft + errorRight)/2
         integral += errorTotal
         derivative = errorTotal - lastError
         correction = errorTotal * kp + integral * ki + derivative * kd
-
-
         lastError = errorTotal
         #correciton = (error * kp) + (integral * ki) + (derivative * kd)
         #error = target - value
         #integral = integral + error
         #derivative = error - last_error
 
-        if(left < trigger): #preto
-            esquerdo = 1
-        else: #branco
-            esquerdo = 0
-
-        if(middle < trigger): #preto
+        if(middle < triggerMeio): #preto
             meio = 1
         else: #branco
             meio = 0
@@ -176,40 +197,46 @@ class Robot:
         else: #branco
             direito = 0
 
-        print(left, " ", middle, " ", right)
+        if(left < trigger): #preto
+            esquerdo = 1
+        else: #branco
+            esquerdo = 0
+
+        print(middle)
 
 
     def seguidor(self,initialSpeed,speed_reta,speed_curva):
         if(Robot.verificaEncruzilhada(self) == True):
-            if(Robot.temCertezaEncruzilhada(self) == True):
-                Robot.stop(self,100)
-        elif(esquerdo == 0 and direito == 0):
-            self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
-        elif(esquerdo == 1 and direito == 0):
-            #Robot.curva_esquerda(self,speed_reta,speed_curva)
-            self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
-        elif(esquerdo == 0 and direito == 1):
-            #Robot.curva_direita(self,speed_reta,speed_curva)
-            self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
-
+            Robot.encruzilhada(self)
+        if(meio == 0):
+            if(esquerdo == 1 and direito == 0):
+                Robot.turnLeft(self,speed_curva)
+            elif(esquerdo == 0 and direito == 1):
+                Robot.turnRight(self,speed_curva)
+            elif(esquerdo == 0 and direito == 0):
+                Robot.goForward(self,speed_reta)
+            '''self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
+            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))'''
+        else:
+            self.lm1.run_forever(speed_sp = -(initialSpeed - correctionMeio))
+            self.lm2.run_forever(speed_sp = -(initialSpeed + correctionMeio))
 
     def verificaEncruzilhada(self):
         if((esquerdo == 1 and meio == 1) or (meio == 1 and direito == 1) or (esquerdo == 1 and direito == 1)):
-            return False
+            return True
+
+    def encruzilhada(self):
+        Robot.verificaCor(self)
+        if
 
     def seguirLinha(self,speed_reta,speed_curva):
         global esquerdo
         global meio
         global direito
         while(True):
-            if(Robot.verificaEncruzilhada(self) == True):
-                Robot.stop(self,100)
-            else:
-                Robot.verificaIntensidade(self)
-                Robot.seguidor(self,speed_reta,speed_reta,speed_curva)
+            Robot.verificaIntensidade(self)
+            Robot.verificaEncruzilhada(self)
+            Robot.seguidor(self,speed_reta,speed_reta,speed_curva)
 
 
 verdade = [0,0,0,0,0]
@@ -220,24 +247,33 @@ turn = 0
 esquerdo = 0
 direito = 0
 meio = 0
-trigger = 0
-kp = 7
-ki = -0.05
+trigger = 28
+kp = 0
+ki = 0
 kd = 0
-target = 0
-errorLeft = 0
-errorRight = 0
-errorTotal = 0
+target = 45
+error = 0
 correction = 0
 integral = 0
 derivative = 0
 lastError = 0
+errorMeio = 0
+targetMeio = 28
+triggerMeio = 35
+integralMeio = 0
+derivativeMeio = 0
+lastErrorMeio = 0
+correctionMeio = 0
+kpMeio = 15
+kiMeio = 0
+kdMeio = 0
+errorLeft = 0
+errorRight = 0
+errorTotal = 0
 
 
 #with open('estados.txt', "w") as arquivo:
 #    arquivo.write("BEGIN")
 
 Corsa = Robot('outB','outD','in2','in3','in4')
-Sound.speak('Luke, I am your father')
-Corsa.encontrarT()
 Corsa.seguirLinha(200,90)
