@@ -327,18 +327,24 @@ class Robot:
         #integral = integral + error
         #derivative = error - last_error
 
-        if(middle < triggerMeio): #preto
+        if(middle < 20): #verde
+            meio = 2
+        elif(middle >= 20 and middle <= 50): #preto
             meio = 1
         else: #branco
             meio = 0
 
-        if(right < trigger): #preto
+        if(right < 20): #preto
             direito = 1
+        elif(right >= 20 and right <= 25): #verde
+            direito = 2
         else: #branco
             direito = 0
 
-        if(left < trigger): #preto
+        if(left < 20): #preto
             esquerdo = 1
+        elif(left >= 20 and left <= 25): #verde
+            esquerdo = 2
         else: #branco
             esquerdo = 0
 
@@ -350,18 +356,10 @@ class Robot:
              Robot.encruzilhada(self,150,110)
 
     def verificaEncruzilhada(self):
-        if(esquerdo == 1 and meio == 1 and direito == 0):
+        global esquerdo
+        global direito
+        if(esquerdo == 2 or direito == 2):
             return True
-            #Robot.temCertezaEncruzilhada(self)
-        elif(esquerdo == 1 and meio == 0 and direito == 1):
-            return True
-            #Robot.temCertezaEncruzilhada(self)
-        elif(esquerdo == 0 and meio == 1 and direito == 1):
-            return True
-            #Robot.temCertezaEncruzilhada(self)
-        elif(esquerdo == 1 and meio == 1 and direito == 1):
-            return True
-            #Robot.temCertezaEncruzilhada(self)
         else:
             return False
 
@@ -575,9 +573,15 @@ class Robot:
                 Robot.curva_direita(self,speed_reta,speed_curva)
             elif(esquerdo == 0 and direito == 0):
                 Robot.goForward(self,speed_reta)
-        else:
+        elif(meio == 1):
             self.lm1.run_forever(speed_sp = -(initialSpeed - correctionMeio))
             self.lm2.run_forever(speed_sp = -(initialSpeed + correctionMeio))
+        elif(meio == 2):
+            Robot.verificaCor(self)
+            if(meio == 2):
+                Robot.goForward(self,speed_reta)
+            elif(meio == 1):
+                Robot.turnRight(self,speed_curva)
 
     def seguirLinha(self,speed_reta,speed_curva):
         global esquerdo
@@ -608,14 +612,14 @@ integral = 0
 derivative = 0
 lastError = 0
 errorMeio = 0
-targetMeio = 22
+targetMeio = 28
 triggerMeio = 45
 integralMeio = 0
 derivativeMeio = 0
 lastErrorMeio = 0
 correctionMeio = 0
-kpMeio = 16
-kiMeio = -0.01
+kpMeio = 10
+kiMeio = 0 #-0.01
 kdMeio = 0
 errorLeft = 0
 errorRight = 0

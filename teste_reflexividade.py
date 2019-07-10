@@ -7,11 +7,14 @@ from enum import Enum
 from time import sleep
 from time import time
 
-sensor = ev3.ColorSensor('in3'); assert sensor.connected
-
+sensor1 = ev3.ColorSensor('in2'); assert sensor1.connected
+sensor2 = ev3.ColorSensor('in3'); assert sensor2.connected
+sensor3 = ev3.ColorSensor('in4'); assert sensor3.connected
 while(True):
-    intensidade = sensor.reflected_light_intensity
-    print(intensidade)
+    intensidade1 = sensor1.reflected_light_intensity
+    intensidade2 = sensor2.reflected_light_intensity
+    intensidade3 = sensor3.reflected_light_intensity
+    print(intensidade1, " ", intensidade2, " ", intensidade3)
 
 
 
