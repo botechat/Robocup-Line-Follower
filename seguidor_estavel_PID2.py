@@ -385,7 +385,9 @@ class Robot:
     def encruzilhada(self,speed_reta,speed_curva):
         global estado
         global esquerdo
+        global meio
         global direito
+        global errorTotal
         global viraEsquerda
         global viraDireita
         global jaReleu
@@ -393,13 +395,13 @@ class Robot:
         viraEsquerda = False
         viraDireita = False
         Robot.reposicionar(self)
-        Robot.verificaIntensidade(self)
         while(Robot.verificaEncruzilhada(self) == False):
             Robot.verificaCor(self)
-            Robot.goForward(self,40) #CALIBRAR'''
+            Robot.goForward(self,30) #CALIBRAR
+            print(esquerdo, " ", meio, " ", direito)
             if(esquerdo == 2):
-                viraEsquerda = True
-            if(direito == 2):
+                viraEsquerda = Tru784
+                1758            if(direito == 2):
                 viraDireita = True
         if(viraEsquerda == True and viraDireita == False):
             Robot.corrigeReto(self,200,700) #CALIBRAR
@@ -437,10 +439,23 @@ class Robot:
         elif(viraEsquerda == False and viraDireita == False):
             Sound.speak("No Green")
             Robot.corrigeReto(self,200,700) #CALIBRAR
+        esquerdo = 0
+        meio = 1
+        direito = 0
+        errorTotal = 0
+        estado = States(2)
 
     def reposicionar(self): #CALIBRAR
+        global viraEsquerda
+        global viraDireita
         Robot.stop(self,100)
-        Robot.corrigeTras(self,200,600)
+        for i in range(3):
+            Robot.corrigeTras(self,100,200)
+            Robot.verificaCor(self)
+            if(esquerdo == 2):
+                viraEsquerda = True
+            if(direito == 2):
+                viraDireita = True
 
     def verificaDistancia(self,distancia_limite):
         global estado
@@ -474,20 +489,25 @@ class Robot:
     def seguidor(self,speed_reta,speed_curva):
         global correction
         initialSpeed = speed_reta
-        if(Robot.verificaEncruzilhada(self) == True):
-            Robot.encruzilhada(self,speed_reta,speed_curva)
 
         if(meio == 0):
             if(esquerdo == 0 and direito == 0):
                 self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
                 self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
             elif(esquerdo == 1 and direito == 0):
-                Robot.curva_esquerda(self,speed_reta,speed_curva)
+                #Robot.curva_esquerda(self,speed_reta,speed_curva)
+                self.lm1.run_forever(speed_sp = -(initialSpeed - correction*2))
+                self.lm2.run_forever(speed_sp = -(initialSpeed + correction*2))
             elif(esquerdo == 0 and direito == 1):
-                Robot.curva_direita(self,speed_reta,speed_curva)
+                #Robot.curva_direita(self,speed_reta,speed_curva)
+                self.lm1.run_forever(speed_sp = -(initialSpeed - correction*2))
+                self.lm2.run_forever(speed_sp = -(initialSpeed + correction*2))
         elif(meio == 1):
             self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
             self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
+
+        if(Robot.verificaEncruzilhada(self) == True):
+            Robot.encruzilhada(self,speed_reta,speed_curva)
 
 
     def seguirLinha(self,speed_reta,speed_curva):
@@ -501,16 +521,13 @@ class Robot:
             Robot.PID(self)
             Robot.seguidor(self,speed_reta,speed_curva) #CALIBRAR
 
-
-
-
 verdade = [0,0,0,0,0]
 turn = 0
 esquerdo = 0
 direito = 0
 meio = 0
 trigger = 0 #28 tem que incluir o verde e o preto
-kp = 15
+kp = 8
 ki = 0 #-0.05
 kd = 0 #8
 target = 0
@@ -552,5 +569,4 @@ Corsa.abrirAprendizadoBranco_direito()
 Corsa.abrirAprendizadoPreto_direito()
 Corsa.abrirAprendizadoVerde_direito()
 Corsa.encontrarT()
-Sound.speak('Hello, I am Corsa')
-Corsa.seguirLinha(210,120)
+Corsa.seguirLinha(200,90)
