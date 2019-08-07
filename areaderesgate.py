@@ -19,13 +19,13 @@ comprimento = 0
 atual = 0
 qtos_retoes = 0
 paridade = 1 #diz se o robo tem que virar pra esquerda ou pra direita
-parede = 0 #parede = 0 indica que a parede esta do lado direito do robo, enquanto parede = 1 indica pared no lado esquerdo (a primeira parede da sala, a do lado da entrada) 
+parede = 0 #parede = 0 indica que a parede esta do lado direito do robo, enquanto parede = 1 indica pared no lado esquerdo (a primeira parede da sala, a do lado da entrada)
 area_de_resgate = 0
 achou = 0
 onde_ta = 0
 voltou=0
 coords_robo = [0,0]
-orientacao_robo = 0 
+orientacao_robo = 0
 coords_area = [0,0]
 terminou = 0
 class Robot:
@@ -328,7 +328,7 @@ class Robot:
         if(area==1):
             qtos_vai = largura-3
         if(area==2):
-                
+
 
 Corsa = Robot('outB','outD', 'outC', 'outA', in2','in3','in4', 'in1')
 Sound.speak('Hello, I am Corsa').wait()

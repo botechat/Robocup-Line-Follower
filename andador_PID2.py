@@ -147,13 +147,10 @@ class Robot:
         middle = self.sm.reflected_light_intensity
         right = self.sd.reflected_light_intensity
 
-        errorLeft = left - target
-        errorRight = right - target
-        errorTotal = -errorLeft + errorRight
+        errorTotal = right - left
         integral += errorTotal
         derivative = errorTotal - lastError
         correction = errorTotal * kp + integral * ki + derivative * kd
-
 
         lastError = errorTotal
         #correciton = (error * kp) + (integral * ki) + (derivative * kd)
@@ -180,20 +177,17 @@ class Robot:
 
 
     def seguidor(self,initialSpeed,speed_reta,speed_curva):
-        if(Robot.verificaEncruzilhada(self) == True):
-            if(Robot.temCertezaEncruzilhada(self) == True):
-                Robot.stop(self,100)
-        elif(esquerdo == 0 and direito == 0):
-            self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
+        '''if(esquerdo == 0 and direito == 0):
+            self.lm1.run_forever(speed_sp = (initialSpeed - correction))
+            self.lm2.run_forever(speed_sp = (initialSpeed + correction))
         elif(esquerdo == 1 and direito == 0):
-            #Robot.curva_esquerda(self,speed_reta,speed_curva)
-            self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
+            Robot.curva_esquerda(self,speed_reta,speed_curva)
         elif(esquerdo == 0 and direito == 1):
-            #Robot.curva_direita(self,speed_reta,speed_curva)
-            self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
+            Robot.curva_direita(self,speed_reta,speed_curva)'''
+
+        self.lm1.run_forever(speed_sp = (initialSpeed - correction))
+        self.lm2.run_forever(speed_sp = (initialSpeed + correction))
+
 
 
     def verificaEncruzilhada(self):
@@ -205,11 +199,11 @@ class Robot:
         global meio
         global direito
         while(True):
-            if(Robot.verificaEncruzilhada(self) == True):
+            '''if(Robot.verificaEncruzilhada(self) == True):
                 Robot.stop(self,100)
-            else:
-                Robot.verificaIntensidade(self)
-                Robot.seguidor(self,speed_reta,speed_reta,speed_curva)
+            else:'''
+            Robot.verificaIntensidade(self)
+            Robot.seguidor(self,speed_reta,speed_reta,speed_curva)
 
 
 verdade = [0,0,0,0,0]
@@ -221,8 +215,8 @@ esquerdo = 0
 direito = 0
 meio = 0
 trigger = 0
-kp = 7
-ki = -0.05
+kp = 4
+ki = 0
 kd = 0
 target = 0
 errorLeft = 0
@@ -240,4 +234,4 @@ lastError = 0
 Corsa = Robot('outB','outD','in2','in3','in4')
 Sound.speak('Luke, I am your father')
 Corsa.encontrarT()
-Corsa.seguirLinha(200,90)
+Corsa.seguirLinha(150,90)
