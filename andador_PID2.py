@@ -215,7 +215,7 @@ esquerdo = 0
 direito = 0
 meio = 0
 trigger = 0
-kp = 4
+kp = 5
 ki = 0
 kd = 0
 target = 0
@@ -232,6 +232,6 @@ lastError = 0
 #    arquivo.write("BEGIN")
 
 Corsa = Robot('outB','outD','in2','in3','in4')
-Sound.speak('Luke, I am your father')
+#Sound.speak('Luke, I am your father')
 Corsa.encontrarT()
-Corsa.seguirLinha(150,90)
+Corsa.seguirLinha(100,90)

@@ -400,8 +400,8 @@ class Robot:
             Robot.goForward(self,30) #CALIBRAR
             print(esquerdo, " ", meio, " ", direito)
             if(esquerdo == 2):
-                viraEsquerda = Tru784
-                1758            if(direito == 2):
+                viraEsquerda = True
+            if(direito == 2):
                 viraDireita = True
         if(viraEsquerda == True and viraDireita == False):
             Robot.corrigeReto(self,200,700) #CALIBRAR
@@ -489,25 +489,12 @@ class Robot:
     def seguidor(self,speed_reta,speed_curva):
         global correction
         initialSpeed = speed_reta
-
-        if(meio == 0):
-            if(esquerdo == 0 and direito == 0):
-                self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-                self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
-            elif(esquerdo == 1 and direito == 0):
-                #Robot.curva_esquerda(self,speed_reta,speed_curva)
-                self.lm1.run_forever(speed_sp = -(initialSpeed - correction*2))
-                self.lm2.run_forever(speed_sp = -(initialSpeed + correction*2))
-            elif(esquerdo == 0 and direito == 1):
-                #Robot.curva_direita(self,speed_reta,speed_curva)
-                self.lm1.run_forever(speed_sp = -(initialSpeed - correction*2))
-                self.lm2.run_forever(speed_sp = -(initialSpeed + correction*2))
-        elif(meio == 1):
-            self.lm1.run_forever(speed_sp = -(initialSpeed - correction))
-            self.lm2.run_forever(speed_sp = -(initialSpeed + correction))
-
         if(Robot.verificaEncruzilhada(self) == True):
             Robot.encruzilhada(self,speed_reta,speed_curva)
+
+        self.lm1.run_forever(speed_sp = (initialSpeed - correction))
+        self.lm2.run_forever(speed_sp = (initialSpeed + correction))
+
 
 
     def seguirLinha(self,speed_reta,speed_curva):
@@ -527,7 +514,7 @@ esquerdo = 0
 direito = 0
 meio = 0
 trigger = 0 #28 tem que incluir o verde e o preto
-kp = 8
+kp = 5
 ki = 0 #-0.05
 kd = 0 #8
 target = 0
@@ -569,4 +556,11 @@ Corsa.abrirAprendizadoBranco_direito()
 Corsa.abrirAprendizadoPreto_direito()
 Corsa.abrirAprendizadoVerde_direito()
 Corsa.encontrarT()
-Corsa.seguirLinha(200,90)
+Corsa.seguirLinha(100,90)
+
+#TODO aplicar máquina de estados antiga quando vê encruzilhada
+#TODO erro: Corsa vê encruzilhada quando não tem, e se perde na linha -> limitar tempo
+#TODO erro: vira antes de entrar na encruzilhada
+#TODO erro: segue torto no branco e erra gap
+#TODO obs: talvez a leitura do sensor do meio esteja interferindo nos erros acima listados
+#TODO vê encruzilhada, vai para trás e entra na máquina de estados
